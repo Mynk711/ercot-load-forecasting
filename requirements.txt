@@ -1,0 +1,8 @@
+pandas>=2.0
+numpy
+openpyxl
+xlrd
+matplotlib
+scikit-learn
+xgboost
+meteostat==1.6.8

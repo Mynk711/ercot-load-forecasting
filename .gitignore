@@ -1,0 +1,9 @@
+data/raw/load/*
+data/raw/TXNA.csv
+data/processed/*
+!data/raw/load/.gitkeep
+!data/processed/.gitkeep
+__pycache__/
+.venv/
+.DS_Store
+.vscode/
