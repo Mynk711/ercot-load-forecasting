@@ -36,6 +36,44 @@ zones vs. system total). All 250 planted anomalies were detected in an injection
 test. On the real data, the only flags were 48 hours on May 17–18, 2021, where
 the weather zones don't sum to the reported ERCOT total.
 
+### Load modifier scenarios (what-if)
+Stylized EV, rooftop solar, and demand response profiles added to actual 2025
+load, based on stated assumptions (not measured data):
+
+| Scenario | Annual peak change | Energy change |
+|---|---|---|
+| +1M EVs, unmanaged (evening) charging | +1.0% | +0.7% |
+| +1M EVs, managed (overnight) charging | 0.0% | +0.7% |
+| +3M EVs, unmanaged charging | +3.0% | +2.2% |
+| +10 GW rooftop solar | -2.0% | -3.1% |
+| 3 GW demand response (top 20 days) | -0.7% | -0.1% |
+
+The same EVs add the same energy either way, but overnight charging adds
+nothing to the peak. Solar cuts energy more than peak, because
+the peak shifts to about 6 PM as solar output fades. The small demand response
+effect reflects the script's simple fixed 4-hour window, which lets the peak move
+to an adjacent hour.
+
+![Load modifier scenarios](figures/load_modifiers_summer_day.png)
+
+### Forecast uncertainty
+90% prediction intervals from quantile gradient boosting, calibrated on 2024 with
+conformalized quantile regression:
+
+| Coverage (target 90%) | Raw | Calibrated |
+|---|---|---|
+| All hours | 85.2% | **90.5%** |
+| Daily peak hours | 80.8% | **88.0%** |
+| Top 10% peak days | 73.0% | **83.8%** |
+
+Average calibrated interval width is 7.1 GW. Peak days remain under-covered.
+
+![Prediction intervals](figures/intervals_july.png)
+
+### Interactive dashboard
+[Forecast performance dashboard](https://mynk711.github.io/ercot-load-forecasting/figures/dashboard.html):
+monthly error and bias, error by hour, error vs temperature, and worst days.
+
 ## Data
 - **Load:** ERCOT Hourly Load Data Archives, 2019–2025, total and by weather zone.
   Timestamps are hour-ending Central time, converted to hour-beginning.
@@ -72,6 +110,9 @@ the weather zones don't sum to the reported ERCOT total.
   don't capture.
 - **Single test year:** Results are from 2025 only.
 
+See [BUILD_LOG.md](BUILD_LOG.md) for the issues found during the build and how
+each was handled.
+
 ## How to run
 1. Download ERCOT yearly load archives (2019–2025) from
    ercot.com/gridinfo/load/load_hist, unzip, and place them in `data/raw/load/`.
@@ -89,5 +130,8 @@ python 04_train_evaluate.py   # hourly models
 python 05_data_quality.py     # data quality checks
 python 06_daily_peak.py       # daily peak models
 python 07_monthly_energy.py   # monthly energy model
+python 08_load_modifiers.py   # EV, solar, demand response scenarios
+python 09_uncertainty.py      # prediction intervals
+python 10_dashboard.py        # builds figures/dashboard.html
 ```
 On macOS, XGBoost needs OpenMP: `brew install libomp`.
