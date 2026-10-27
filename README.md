@@ -110,8 +110,7 @@ monthly error and bias, error by hour, error vs temperature, and worst days.
   don't capture.
 - **Single test year:** Results are from 2025 only.
 
-See [BUILD_LOG.md](BUILD_LOG.md) for the issues found during the build and how
-each was handled.
+
 
 ## How to run
 1. Download ERCOT yearly load archives (2019–2025) from
